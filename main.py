@@ -1,82 +1,18 @@
 import random, time
-
-class Personnage:
-    def __init__(self, nom:str, vie:int, attaque:int):
-        """
-        Super class for the personnages in this game
-        """
-        self.nom = nom
-        self.attaque = attaque
-        self.vie = vie
-
-    def est_vivant(self):
-        return self.vie > 0
-
-    def get_arme(self):
-        self.attaque += Arme
-
-    def attaquer(self, cible):
-        print(f"{self.nom} attaque {cible.nom} et fait {self.attaque} de dégats !")
-        cible.vie -= self.attaque
-
-    def attaquer_arme(self, arme, cible):
-        cible.vie -= (arme.attaque + self.attaque)
-        print(f"{self.nom} attaque {cible.nom} et fait {self.attaque} de dégats avec {arme.nom} !")
-
-class Arme:
-    def __init__(self, nom:str, attaque:int):
-        self.nom = nom
-        self.attaque = attaque
-
-class Heros(Personnage):
-    def __init__(self, nom, vie, attaque):
-        super().__init__(nom, vie, attaque)
-        self.mana = 0
-        self.vie_max = vie
-
-    def vie_max(self):
-        self.vie +=1
-
-    def get_mana(self):
-        self.mana += self.attaque
-
-    def attaque_speciale(self, cible):
-        if random.randint(0, 10) == 10:
-            cible.vie -= self.attaque + 10
-
-    def ultimate(self, cible):
-        cible.vie -= self.attaque + 90
-
-    def regenerate_life(self):
-        self.vie += 20
-
-class Ennemi(Personnage):
-    def __init__(self, nom, vie, attaque):
-        super().__init__(nom, vie, attaque)
-
-    def attaque_speciale(self, cible):
-        if random.randint(0, 10) == 10:
-            cible.vie -= self.attaque + 12
-
-
-class Boss(Personnage):
-    def __init__(self, nom, vie, attaque):
-        super().__init__(nom, vie, attaque)
-
-    def attaque_speciale(self, cible):
-        if random.randint(0, 20) == 10:
-            cible.vie -= self.attaque + 50
-
-#Armes
-epee = Arme("Epee", 15)
-baton = Arme("Baton", 5)
+from settings import Settings
 
 # Personnages
-heros = Heros("Tristan", 120, 20)
-ennemi = Ennemi("Ennemi", 65, 15)
-boss = Boss("Boss", 130, 30)
+heros = Settings().heros
+ennemi = Settings().ennemi
+boss = Settings().boss
+
+# Armes
+epee = Settings().epee
 
 def main():
+    heros.add_arm_inventory(epee)
+    print(f"Inventaire de {heros.nom} : {heros.get_heros_inventaire()}")
+    time.sleep(3)
     print("Le combat commence...")
     print(f"{ennemi.nom} à {ennemi.vie} de vie")
     print(f"{heros.nom} à {heros.vie} de vie")
@@ -117,6 +53,7 @@ def main():
         time.sleep(1)
         print("Ton Arme a été boosté")
         epee.attaque += 20
+        print()
         time.sleep(1)
 
         while heros.est_vivant() and boss.est_vivant():
@@ -126,9 +63,12 @@ def main():
                     print(f"La vie à {heros.nom} a été augmenté")
                 heros.attaquer_arme(epee, boss)
                 heros.get_mana()
+                time.sleep(1)
 
                 print(f"{heros.nom} : vie = {heros.vie}, mana = {heros.mana}")
                 print(f"{boss.nom} : vie = {boss.vie}")
+                time.sleep(1)
+                print()
 
             if boss.est_vivant():
                 boss.attaquer(heros)
@@ -137,6 +77,8 @@ def main():
 
                     print(f"{heros.nom} : vie = {heros.vie}, mana = {heros.mana}")
                     print(f"{ennemi.nom} : vie = {ennemi.vie}")
+                    time.sleep(1)
+                    print()
 
     if heros.est_vivant():
         print(f"{heros.nom} a gagné !")
